@@ -1,0 +1,57 @@
+# Same gates for every author (human or any agent). Revs current as of Oct 2026;
+# scripts/install_agent_kit.sh runs `pre-commit autoupdate` on install. gitleaks needs Go
+# (pre-commit bootstraps it) — use id `gitleaks-docker` or `gitleaks-system` if you prefer.
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-yaml
+        exclude: "^conda/"          # Jinja-templated recipes are not plain YAML
+      - id: check-toml
+      - id: check-json
+      - id: check-added-large-files
+        args: ["--maxkb=2000"]
+      - id: check-merge-conflict
+      - id: detect-private-key
+      - id: end-of-file-fixer
+        exclude: '(^|/)\.gitkeep$'
+      - id: trailing-whitespace
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.1
+    hooks:
+      - id: ruff-check              # formatting stays opt-in: `make fmt` / `ruff format`
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.0
+    hooks:
+      - id: gitleaks
+  - repo: https://github.com/snakemake/snakefmt
+    rev: v2.1.0
+    hooks:
+      - id: snakefmt
+  - repo: local
+    hooks:
+      - id: validate-samplesheet
+        name: validate sample sheet
+        entry: python3 scripts/validate_samplesheet.py
+        language: system
+        files: "^config/samples\\.tsv$"
+      - id: check-contracts
+        name: data-product contracts well-formed
+        entry: python3 scripts/check_contracts.py
+        language: system
+        pass_filenames: false
+        files: "^(contracts/|workflow/|modules/)"
+      - id: check-claims
+        name: claims bounded by validation gates
+        entry: python3 scripts/check_claims.py
+        language: system
+        pass_filenames: false
+        files: "^claims/"
+  - repo: local
+    hooks:
+      - id: agent-skills-in-sync
+        name: .claude/skills mirrors .agents/skills
+        entry: bash -c '[ ! -d .claude/skills ] || diff -r .agents/skills .claude/skills'
+        language: system
+        pass_filenames: false
+        files: "^(\\.agents|\\.claude)/skills/"

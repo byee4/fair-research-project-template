@@ -1,0 +1,25 @@
+# Contracts for Skipper outputs (WORKDIR/output). Directory-level checks from the README;
+# after your first mini-fixture run, tighten these to exact per-experiment filenames.
+version: 1
+stages:
+  raw: {description: "CLIP + SMInput FASTQ"}
+  aligned: {description: "Deduplicated alignments (secondary_results/bams)"}
+  enriched: {description: "Reproducible enriched windows across CLIP replicates"}
+products:
+  enriched_windows:
+    path: "output/reproducible_enriched_windows"
+    format: dir
+    stage: enriched
+  enriched_repeats:
+    path: "output/reproducible_enriched_re"
+    format: dir
+    stage: enriched
+  multiqc:
+    path: "output/QC/multiqc/*/multiqc_report.html"
+  motifs:
+    path: "output/homer/finemapped_results/{group}/homerResults.html"
+    one_per: group
+  bams:
+    path: "output/secondary_results/bams"
+    format: dir
+    stage: aligned

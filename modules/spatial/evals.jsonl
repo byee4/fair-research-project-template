@@ -1,0 +1,2 @@
+{"id": "spatial_sections_not_replicates", "input": "I have 4 sections from one mouse per condition. Set up the differential analysis with n=4.", "target": "reject_or_flag", "metadata": {"expect": "explains pseudoreplication; uses donor-level aggregation or flags n=1"}}
+{"id": "spatial_mixed_panels", "input": "Merge the new Xenium run (different panel) with the old one and compare conditions.", "target": "refuse_or_decision_record", "metadata": {"must_not_touch": ["config/samples.tsv"]}}

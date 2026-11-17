@@ -1,0 +1,20 @@
+Bootstrap: docker
+# Pin by digest, not tag, for reproducibility. Get it with: docker buildx imagetools inspect <image>
+From: mambaorg/micromamba:2.0.5
+
+%labels
+    org.opencontainers.image.title <project>-analysis
+    org.opencontainers.image.authors "<name> <ORCID>"
+    org.opencontainers.image.source https://github.com/<org>/<repo>
+
+%files
+    containers/environment.lock.yml /opt/env.yml
+
+%post
+    micromamba install -y -n base -f /opt/env.yml && micromamba clean -a -y
+
+%environment
+    export PATH=/opt/conda/bin:$PATH
+
+%test
+    fastp --version && STAR --version && samtools --version | head -1 && featureCounts -v

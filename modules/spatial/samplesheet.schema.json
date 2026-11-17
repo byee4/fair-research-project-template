@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Spatial transcriptomics sample sheet fields",
+  "description": "One row per tissue section / capture area.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["assay", "platform", "donor", "section_id"],
+    "properties": {
+      "assay": {"type": "string", "pattern": "^((EFO|OBI):[0-9]+|TODO:.+)$", "description": "Assay ontology id; TODO:<name> allowed only until data arrive (see tests)"},
+      "platform": {"enum": ["visium", "visium-hd", "xenium", "merscope", "cosmx"]},
+      "donor": {"type": "string", "minLength": 1, "description": "Independent biological unit (patient, animal). Replicates = distinct donors."},
+      "section_id": {"type": "string", "minLength": 1},
+      "preservation": {"enum": ["FFPE", "fresh-frozen", "fixed-frozen"]},
+      "panel": {"type": "string", "description": "Gene panel id/version (imaging platforms)"},
+      "fastq_dir": {"type": "string"},
+      "image": {"type": "string"},
+      "cytaimage": {"type": "string"},
+      "slide": {"type": "string"},
+      "area": {"type": "string"},
+      "data_path": {"type": "string", "description": "Vendor output bundle directory (Xenium/MERSCOPE/CosMx/Space Ranger outs)"}
+    },
+    "allOf": [
+      {"if": {"required": ["fastq_dir"]}, "then": {"anyOf": [{"required": ["image"]}, {"required": ["cytaimage"]}], "required": ["slide", "area"]}},
+      {"if": {"properties": {"platform": {"enum": ["xenium", "merscope", "cosmx"]}}}, "then": {"required": ["data_path", "panel"]}},
+      {"if": {"properties": {"platform": {"const": "visium-hd"}}}, "then": {"anyOf": [{"required": ["data_path"]}, {"required": ["fastq_dir"]}]}},
+      {"if": {"properties": {"platform": {"const": "visium"}}}, "then": {"anyOf": [{"required": ["data_path"]}, {"required": ["fastq_dir"]}]}}
+    ]
+  }
+}

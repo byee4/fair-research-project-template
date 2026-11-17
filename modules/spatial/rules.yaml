@@ -1,0 +1,11 @@
+replace: [unique, min_per_value]
+unique:
+  - [sample_id]
+  - [section_id]
+  - [slide, area]
+consistent_all: [platform, panel, preservation]
+consistent_within:
+  - {by: donor, columns: [condition]}
+min_per_value:
+  - {column: condition, min: 2, distinct: donor}
+path_columns: [fastq_dir, image, cytaimage, data_path]

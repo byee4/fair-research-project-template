@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "scRNA-seq sample sheet fields",
+  "description": "One row per FASTQ pair (lane); rows sharing sample_id are one library.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["assay", "donor", "material", "protocol", "fastq_1", "fastq_2"],
+    "properties": {
+      "assay": {"type": "string", "pattern": "^((EFO|OBI):[0-9]+|TODO:.+)$"},
+      "donor": {"type": "string", "minLength": 1},
+      "material": {"enum": ["cells", "nuclei"]},
+      "protocol": {"enum": ["10XV2", "10XV3", "10XV4", "dropseq", "smartseq", "auto"]},
+      "lane": {"type": "string"},
+      "expected_cells": {"type": "integer", "minimum": 1},
+      "multiplexing": {"enum": ["none", "hashtag", "genetic", "flex-probe-barcode"]},
+      "fastq_1": {"type": "string", "pattern": "^\\S+\\.f(ast)?q\\.gz$", "description": "R1: cell barcode + UMI"},
+      "fastq_2": {"type": "string", "pattern": "^\\S+\\.f(ast)?q\\.gz$", "description": "R2: cDNA"}
+    }
+  }
+}

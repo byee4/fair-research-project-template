@@ -1,0 +1,39 @@
+# Snakemake 9.x skeleton. Run on TSCC with:  snakemake --profile workflow/snakemake/profiles/tscc
+import os
+
+import pandas as pd
+from snakemake.utils import validate, min_version
+
+min_version("9.0")
+
+
+configfile: "config/config.yaml"
+
+
+validate(config, "../../schemas/config.schema.json")
+
+samples = pd.read_csv(config["samplesheet"], sep="\t", dtype=str).fillna("")
+samples["replicate"] = samples["replicate"].astype(int)
+validate(samples.to_dict("records"), "../../schemas/samplesheet.core.schema.json")
+validate(samples.to_dict("records"), "../../schemas/samplesheet.assay.schema.json")
+samples = samples.set_index("sample_id", drop=False)
+
+SAMPLES = list(samples.index)
+GROUPS = sorted(set(samples["group"]) - {""})
+OUT = config["outdir"]
+
+
+container: "containers/analysis.sif"
+
+
+include: "rules/preprocess.smk"
+include: "rules/quantify.smk"
+include: "rules/report.smk"
+
+
+rule all:
+    input:
+        f"{OUT}/counts/counts_matrix.tsv",
+        expand(f"{OUT}/merged/{{group}}.bedgraph", group=GROUPS),
+        f"{OUT}/qc/qc_summary.tsv",
+        f"{OUT}/diff/diff_results.tsv",

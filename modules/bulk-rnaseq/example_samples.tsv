@@ -1,0 +1,5 @@
+sample_id	condition	replicate	group	batch	assay	organism_taxon	biosample	source	lane	fastq_1	fastq_2	strandedness
+CTRL_1	control	1	CTRL	B1	EFO:0008896	NCBITaxon:9606	CVCL_0030	IGM order <id>	L001	data/raw/CTRL_1_L001_R1.fastq.gz	data/raw/CTRL_1_L001_R2.fastq.gz	reverse
+CTRL_2	control	2	CTRL	B2	EFO:0008896	NCBITaxon:9606	CVCL_0030	IGM order <id>	L001	data/raw/CTRL_2_L001_R1.fastq.gz	data/raw/CTRL_2_L001_R2.fastq.gz	reverse
+KD_1	treatment	1	KD	B1	EFO:0008896	NCBITaxon:9606	CVCL_0030	IGM order <id>	L001	data/raw/KD_1_L001_R1.fastq.gz	data/raw/KD_1_L001_R2.fastq.gz	reverse
+KD_2	treatment	2	KD	B2	EFO:0008896	NCBITaxon:9606	CVCL_0030	IGM order <id>	L001	data/raw/KD_2_L001_R1.fastq.gz	data/raw/KD_2_L001_R2.fastq.gz	reverse

@@ -1,0 +1,24 @@
+# Contracts for nf-core/sopa outputs (per sample). Verified against the 1.0.x output docs.
+version: 1
+stages:
+  raw: {description: "Vendor output bundle / Space Ranger input in data/raw"}
+  segmented: {description: "Cells segmented and transcripts aggregated (SpatialData)"}
+products:
+  spatialdata:
+    path: "{sample}.zarr"
+    one_per: sample
+    format: zarr
+    stage: segmented
+    required_entries: [tables, shapes]
+  anndata:
+    path: "{sample}.explorer/adata.h5ad"
+    one_per: sample
+    format: h5ad
+    min_rows: 100            # cells; raise once you know expected counts
+  qc_report:
+    path: "{sample}.explorer/report.html"
+    one_per: sample
+  software_versions:
+    path: "pipeline_info/*software_versions.yml"
+  provenance:
+    path: "ro-crate-metadata.json"

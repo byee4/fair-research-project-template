@@ -1,0 +1,108 @@
+name: ci
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 9 * * 1"     # weekly agent eval (Mon 02:17 PT)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - run: pip install pytest pyyaml jsonschema pandas ruff rocrate
+      - name: Definition of done (tests, contracts, claims, agent-kit self-test)
+        run: bash .agent/done.sh
+      - name: pinned pipeline is an exact release
+        if: hashFiles('workflow/pipeline.yaml') != ''
+        run: |
+          python3 - <<'PY'
+          import yaml, sys
+          p = yaml.safe_load(open("workflow/pipeline.yaml"))
+          bad = str(p.get("version", "")).lower() in {"", "latest", "main", "master", "dev", "none"}
+          sys.exit(f"workflow/pipeline.yaml version must be pinned, got {p.get('version')!r}" if bad else 0)
+          PY
+
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - run: pip install pre-commit pyyaml jsonschema pandas   # local hooks use system python
+      - run: pre-commit run --all-files --show-diff-on-failure
+
+  workflow-security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+      - name: zizmor (GitHub Actions static analysis)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: uvx zizmor --min-severity medium .github/workflows
+
+  custom-snakemake:
+    if: hashFiles('workflow/snakemake/Snakefile') != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - run: pip install snakemake pandas jsonschema pyyaml
+      - run: |
+          snakemake -s workflow/snakemake/Snakefile --configfile tests/fixtures/mini/config.yaml -d . --lint
+          snakemake -s workflow/snakemake/Snakefile --configfile tests/fixtures/mini/config.yaml -d . -n
+
+  custom-nextflow:
+    if: hashFiles('workflow/nextflow/main.nf') != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: nf-core/setup-nextflow@893c28b667aedeba26e37f296d260ccc5bc4d914 # v3.0.1
+      - run: cd workflow/nextflow && nextflow lint .
+
+  agent-evals:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - run: pip install inspect-ai anthropic
+      - name: Inspect agent evals
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          EVAL_MODEL: ${{ vars.EVAL_MODEL }}
+        run: inspect eval evals/inspect/lab_tasks.py --model "anthropic/${EVAL_MODEL}" --log-dir eval-logs
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: eval-logs
+          path: eval-logs

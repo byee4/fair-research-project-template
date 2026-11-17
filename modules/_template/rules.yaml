@@ -1,0 +1,3 @@
+# Extends core rules (schemas/samplesheet.rules.yaml). List keys under `replace:` to override instead.
+consistent_within: []
+path_columns: []

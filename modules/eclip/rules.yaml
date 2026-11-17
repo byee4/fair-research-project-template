@@ -1,0 +1,10 @@
+replace: [unique, min_per_value]
+unique:
+  - [sample_id]
+  - [group, replicate]
+  - [clip_fastq]
+consistent_within:
+  - {by: group, columns: [rbp_target, cell_line, condition, antibody]}
+min_per_value:
+  - {column: group, min: 2, distinct: replicate}      # Skipper: >= 2 CLIP replicates per experiment
+path_columns: [clip_fastq, input_fastq, clip_adapter, input_adapter]

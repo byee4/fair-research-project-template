@@ -1,0 +1,25 @@
+# Project profile. Filled in by the agent-guided project interview
+# (docs/agent_playbooks/project_interview.md) and then by scripts/init_project.py.
+# While `assay.module` is null, agents must run the interview before doing anything else.
+project:
+  name: null
+  question: null            # one sentence
+  lead: {name: null, orcid: null}
+  pi: {name: null, orcid: null}
+assay:
+  module: null              # bulk-rnaseq | spatial | eclip | scrnaseq | <new module>
+  variant: null             # e.g. visium-hd, xenium, eclip-se, abc-eclip, 10x-3prime-v4
+  ontology_term: null       # EFO/OBI id for the assay
+organism:
+  taxon: null               # e.g. NCBITaxon:9606
+  reference: {build: null, annotation: null}
+data_sources: []            # [{name, type: core|collaborator|public, expected: YYYY-MM-DD, controlled_access: bool}]
+compute:
+  primary: null             # tscc | aws | both
+pipeline:
+  mode: null                # community | custom
+  name: null                # e.g. nf-core/rnaseq, YeoLab/skipper
+  version: null             # exact release tag or commit; never "latest"
+  engine: null              # nextflow | snakemake | other
+  verified_on: null         # date the agent checked the release was current
+initialized: false

@@ -1,0 +1,19 @@
+nextflow_pipeline {
+    name "Mini fixture end-to-end"
+    script "../main.nf"
+    profile "test"
+
+    test("mini dataset satisfies data-product contracts") {
+        when { params { outdir = "$outputDir" } }
+        then {
+            assert workflow.success
+            // 'Runs without crashing' is not enough: check contracts and expected values.
+            def r = ["python3", "${projectDir}/../../scripts/check_contracts.py",
+                     "--results", "$outputDir",
+                     "--samplesheet", "${projectDir}/../../tests/fixtures/mini/samples.tsv"].execute()
+            r.waitFor()
+            assert r.exitValue() == 0 : r.err.text
+            assert path("$outputDir/ro-crate-metadata.json").exists()
+        }
+    }
+}

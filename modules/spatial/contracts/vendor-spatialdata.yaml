@@ -1,0 +1,17 @@
+# Contracts for notebook-based analysis of vendor outputs. Notebooks write to results/.
+version: 1
+stages:
+  raw: {description: "Vendor output bundle"}
+  analysis: {description: "Parameterized notebooks reading via spatialdata-io"}
+products:
+  spatialdata:
+    path: "spatialdata/{sample}.zarr"
+    one_per: sample
+    format: zarr
+    required_entries: [tables]
+  executed_notebooks:
+    path: "notebooks/*.html"
+  qc_table:
+    path: "qc/qc_summary.tsv"
+    rows_cover: [sample_id]
+    required_columns: [sample_id, n_cells_or_spots, median_genes, median_transcripts]

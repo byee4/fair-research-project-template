@@ -1,0 +1,17 @@
+# Scientific parameters here are governed by policy/authority.yaml.
+# Changing genome.*, filters.*, or contrasts requires a decisions/ record.
+samplesheet: config/samples.tsv
+outdir: results
+genome:
+  build: GRCh38
+  fasta: data/external/GRCh38.primary_assembly.genome.fa
+  annotation: data/external/gencode.v47.annotation.gtf
+  annotation_version: GENCODE_47
+  chrom_sizes: data/external/GRCh38.chrom.sizes
+  chrom_naming: UCSC
+threads:
+  align: 8
+  count: 4
+filters:
+  min_mapq: 10
+  padj: 0.05

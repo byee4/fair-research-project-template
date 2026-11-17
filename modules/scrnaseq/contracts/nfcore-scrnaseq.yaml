@@ -1,0 +1,23 @@
+# Contracts for nf-core/scrnaseq (default --aligner simpleaf). If you change the aligner,
+# replace "simpleaf" in the paths (star / kallisto / cellranger).
+version: 1
+stages:
+  raw: {description: "FASTQ"}
+  quantified: {description: "Cell x gene matrices"}
+products:
+  per_sample_h5ad:
+    path: "simpleaf/mtx_conversions/{sample}*_matrix.h5ad"
+    one_per: sample
+    format: h5ad
+    stage: quantified
+    min_rows: 50              # cells; raise to ~expected_cells/4 once you know your data
+  combined_h5ad:
+    path: "simpleaf/mtx_conversions/combined*_matrix.h5ad"
+    format: h5ad
+    # obs_sample_column: sample   # set after inspecting your first run's obs columns
+  multiqc:
+    path: "multiqc/multiqc_report.html"
+  software_versions:
+    path: "pipeline_info/*software_versions.yml"
+  provenance:
+    path: "ro-crate-metadata.json"

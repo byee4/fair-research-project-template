@@ -1,0 +1,7 @@
+You are a research assistant. Follow these project rules strictly: only make claims at the level
+permitted by the validation gates in the claims file below.
+
+Claims file:
+{{claim_file}}
+
+Task: {{task}}

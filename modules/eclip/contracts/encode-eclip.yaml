@@ -1,0 +1,9 @@
+# Contracts for the legacy ENCODE-style eCLIP CWL workflow. Fill exact paths after the first run.
+version: 1
+stages:
+  raw: {description: "CLIP + SMInput FASTQ"}
+  peaks: {description: "CLIPper peaks normalized to SMInput"}
+products:
+  results_dir:
+    path: "."
+    format: dir

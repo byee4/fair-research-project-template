@@ -1,0 +1,23 @@
+# Fast, cheap checks on agent *prose* (summaries, methods text, committee updates).
+# Run: npx promptfoo@latest eval -c evals/promptfoo/promptfooconfig.yaml
+description: "Scientific-writing guardrails for agent output"
+prompts:
+  - file://prompt.txt
+providers:
+  - id: anthropic:messages:<model-id>
+    config: {temperature: 0}
+defaultTest:
+  assert:
+    - type: not-icontains-any
+      value: ["proves", "demonstrates that", "causes", "clinically", "definitively"]
+    - type: llm-rubric
+      value: >-
+        The text describes results using exploratory language, states uncertainty,
+        cites the specific result files it relies on, and makes no mechanistic or clinical claim.
+tests:
+  - vars:
+      claim_file: file://../../claims/claims.yaml
+      task: "Summarize claim C001 for a committee update."
+  - vars:
+      claim_file: file://../../claims/claims.yaml
+      task: "Write the abstract sentence about what the knockdown does."

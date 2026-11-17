@@ -1,0 +1,113 @@
+# Delegated authority per decision domain.
+# Levels: autonomous | ask | human_approval (named reviewer + decision record required) | never
+# Judge by reversibility, scientific consequence, and data sensitivity.
+version: 1
+reviewers:
+  scientific: "<PI or senior lab member>"
+  data_access: "<data custodian>"
+
+domains:
+  data:
+    read_raw: autonomous
+    modify_raw: never
+    add_new_dataset: human_approval
+    controlled_access_data_egress: never
+  methods:
+    add_qc_step: autonomous
+    change_aligner_or_caller: human_approval
+    change_pipeline_or_version: human_approval
+    install_or_change_assay_module: human_approval
+  parameters:
+    tune_threads_memory: autonomous
+    change_filter_thresholds: human_approval
+    change_genome_build_or_annotation: human_approval
+  statistics:
+    change_model_or_contrast: human_approval
+    change_primary_estimand: human_approval
+  execution:
+    run_tests_and_lint: autonomous
+    install_packages: ask
+    submit_slurm_job: ask
+    write_to_s3: ask
+    git_push: ask
+    git_push_main: never
+  interpretation:
+    exploratory_description: autonomous
+    mechanistic_or_causal_claim: human_approval
+  reporting:
+    draft_figures: autonomous
+    public_release: human_approval
+
+# Machine-enforced patterns used by .agent/hooks/pre_tool_guard.py (all agents)
+enforcement:
+  deny_write_paths:
+  - data/raw/**
+  - results/**
+  - .git/**
+  - .env
+  - '**/*credentials*'
+  - ~/.aws/**
+  - ~/.ssh/**
+  - .env.[!e]*
+  - '**/*.pem'
+  - logs/agent/**
+  ask_write_paths:
+  - project.yaml
+  - modules/**
+  - workflow/pipeline.yaml
+  - workflow/*samplesheet*
+  - workflow/*manifest*
+  - policy/**
+  - .agent/**
+  - .claude/**
+  - .github/**
+  - .pre-commit-config.yaml
+  - containers/**
+  - schemas/**
+  - contracts/**
+  - data/external/MANIFEST.tsv
+  - config/config.yaml
+  - schemas/samplesheet.rules.yaml
+  - AGENTS.md
+  - CLAUDE.md
+  - .agents/**
+  - .codex/**
+  - .mcp.json
+  deny_read_paths:
+  - .env
+  - ~/.aws/credentials
+  - ~/.ssh/**
+  - .env.[!e]*
+  - '**/*.pem'
+  deny_commands:
+  - \brm\s+-[a-zA-Z]*r[a-zA-Z]*f?\s+.*data/raw
+  - \bgit\s+push\b.*\b(main|master)\b
+  - \bgit\s+push\s+(-f|--force)
+  - \baws\s+s3\s+rm\b
+  - \bchmod\s+.*data/raw
+  - \bgit\s+push\b.*(\s-f\b|--force)
+  - \bgit\s+push\s+\S+\s+HEAD:(main|master)\b
+  - \bgit\s+reset\s+--hard\s+origin
+  - \bgit\s+commit\b.*--no-verify
+  - \bcurl\b[^|]*\|\s*(ba|z)?sh\b
+  - \bchmod\s+-R\s+777\b
+  - \bgit\s+config\b.*core\.hooksPath
+  ask_commands:
+  - \bsbatch\b
+  - \bsrun\b
+  - \bsalloc\b
+  - \bscancel\b
+  - \baws\s+s3\s+(cp|sync|mv)\b
+  - \baws\s+batch\b
+  - \bpip\s+install\b
+  - \bconda\s+install\b
+  - \bmamba\s+install\b
+  - \bnpm\s+install\b
+  - \bgit\s+push\b
+  - \bcurl\b.*\|\s*(ba)?sh
+  - \bpip3?\s+install\b
+  - \buv\s+(add|pip\s+install)\b
+  - \bnpm\s+(i|install)\b
+  - \bgh\s+pr\s+merge\b
+  - \bgit\s+rebase\b
+  - \brm\s+-[a-zA-Z]*r

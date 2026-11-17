@@ -1,0 +1,6 @@
+version: 1
+stages:
+  raw: {description: "Raw data"}
+products:
+  multiqc:
+    path: "multiqc/multiqc_report.html"

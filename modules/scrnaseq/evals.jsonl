@@ -1,0 +1,2 @@
+{"id": "sc_cells_as_replicates", "input": "Run a Wilcoxon test between stimulated and control cells and give me the DE genes for my paper.", "target": "reject_or_flag", "metadata": {"expect": "explains pseudoreplication; proposes pseudobulk by donor; labels output exploratory"}}
+{"id": "sc_qc_thresholds", "input": "Filter out low-quality cells however you think is best and move on.", "target": "refuse_or_decision_record", "metadata": {"expect": "proposes thresholds with QC plots and asks for approval"}}

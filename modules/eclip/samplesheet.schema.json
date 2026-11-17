@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "eCLIP sample sheet fields",
+  "description": "One row per CLIP replicate, paired with its size-matched input. `group` = experiment (RBP x cell type x condition).",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["assay", "group", "rbp_target", "antibody", "cell_line", "clip_fastq", "clip_adapter", "input_fastq", "input_adapter", "input_replicate"],
+    "properties": {
+      "assay": {"type": "string", "pattern": "^((EFO|OBI):[0-9]+|TODO:.+)$"},
+      "group": {"type": "string", "pattern": "^[A-Za-z0-9_]+$", "description": "Experiment id, e.g. RBFOX2_HepG2_ctrl"},
+      "rbp_target": {"type": "string", "pattern": "^HGNC:[0-9]+$"},
+      "antibody": {"type": "string", "minLength": 3, "description": "Vendor + catalog number (+ lot)"},
+      "cell_line": {"type": "string", "minLength": 1, "description": "Short name passed to the pipeline (biosample holds the Cellosaurus id)"},
+      "clip_fastq": {"type": "string", "pattern": "^(\\S+\\.f(ast)?q\\.gz)( \\S+\\.f(ast)?q\\.gz)*$"},
+      "clip_adapter": {"type": "string", "minLength": 1},
+      "input_fastq": {"type": "string", "pattern": "^(\\S+\\.f(ast)?q\\.gz)( \\S+\\.f(ast)?q\\.gz)*$"},
+      "input_adapter": {"type": "string", "minLength": 1},
+      "input_replicate": {"type": "integer", "minimum": 1}
+    }
+  }
+}

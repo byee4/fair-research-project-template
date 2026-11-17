@@ -1,0 +1,9 @@
+sample_id	condition	replicate	batch	assay	organism_taxon	biosample	source	donor	material	protocol	lane	expected_cells	fastq_1	fastq_2
+CTRL_D1	control	1	B1	EFO:0009922	NCBITaxon:9606	CL:0000842	core order <id>	D1	cells	10XV3	L001	8000	data/raw/CTRL_D1_S1_L001_R1_001.fastq.gz	data/raw/CTRL_D1_S1_L001_R2_001.fastq.gz
+CTRL_D1	control	1	B1	EFO:0009922	NCBITaxon:9606	CL:0000842	core order <id>	D1	cells	10XV3	L002	8000	data/raw/CTRL_D1_S1_L002_R1_001.fastq.gz	data/raw/CTRL_D1_S1_L002_R2_001.fastq.gz
+CTRL_D2	control	2	B2	EFO:0009922	NCBITaxon:9606	CL:0000842	core order <id>	D2	cells	10XV3	L001	8000	data/raw/CTRL_D2_S1_L001_R1_001.fastq.gz	data/raw/CTRL_D2_S1_L001_R2_001.fastq.gz
+CTRL_D2	control	2	B2	EFO:0009922	NCBITaxon:9606	CL:0000842	core order <id>	D2	cells	10XV3	L002	8000	data/raw/CTRL_D2_S1_L002_R1_001.fastq.gz	data/raw/CTRL_D2_S1_L002_R2_001.fastq.gz
+STIM_D3	stimulated	1	B1	EFO:0009922	NCBITaxon:9606	CL:0000842	core order <id>	D3	cells	10XV3	L001	8000	data/raw/STIM_D3_S1_L001_R1_001.fastq.gz	data/raw/STIM_D3_S1_L001_R2_001.fastq.gz
+STIM_D3	stimulated	1	B1	EFO:0009922	NCBITaxon:9606	CL:0000842	core order <id>	D3	cells	10XV3	L002	8000	data/raw/STIM_D3_S1_L002_R1_001.fastq.gz	data/raw/STIM_D3_S1_L002_R2_001.fastq.gz
+STIM_D4	stimulated	2	B2	EFO:0009922	NCBITaxon:9606	CL:0000842	core order <id>	D4	cells	10XV3	L001	8000	data/raw/STIM_D4_S1_L001_R1_001.fastq.gz	data/raw/STIM_D4_S1_L001_R2_001.fastq.gz
+STIM_D4	stimulated	2	B2	EFO:0009922	NCBITaxon:9606	CL:0000842	core order <id>	D4	cells	10XV3	L002	8000	data/raw/STIM_D4_S1_L002_R1_001.fastq.gz	data/raw/STIM_D4_S1_L002_R2_001.fastq.gz

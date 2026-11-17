@@ -1,0 +1,36 @@
+# Copy this folder to modules/<assay-name>/ and fill every field.
+# A new module starts as status: draft. A human with assay expertise must review the schema,
+# rules and contracts (and change status to stable) before real data are processed.
+name: <assay-name>
+title: <Human-readable assay name>
+status: draft
+ontology_term: null              # EFO/OBI id from OLS (https://www.ebi.ac.uk/ols4)
+variants:
+  default:
+    title: <variant description>
+    ontology_term: null
+    default_pipeline: <pipeline-id>
+pipelines:
+  - id: <pipeline-id>
+    name: <org/pipeline>
+    engine: nextflow             # nextflow | snakemake | cwl | other
+    url: <homepage>
+    releases_url: <releases page>
+    use_when: "<when this is the right choice>"
+    caveats: "<known limitations>"
+    launch: "<command template; {version} {site_profile} ...>"
+    contracts: <contracts file stem in contracts/>
+    export:                      # omit if the pipeline reads config/samples.tsv directly
+      filename: pipeline_samplesheet.csv
+      format: csv
+      columns: {sample: "{sample_id}"}
+interview_questions:
+  - "<question the agent must ask to pick the variant/pipeline and fill the sample sheet>"
+pitfalls:
+  - "<known failure mode> → <rule/test that catches it>"
+qc_metrics: []
+fair:
+  metadata_standard: "<community standard>"
+  repositories: ["<where data are deposited>"]
+mini_fixture: "<how to build a small, real test dataset>"
+raw_globs: ["**/*"]

@@ -1,0 +1,37 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 30,
+            "command": "GUARD_ASK_MODE=deny python3 \"$(git rev-parse --show-toplevel)\"/.agent/hooks/pre_tool_guard.py"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 60,
+            "command": "\"$(git rev-parse --show-toplevel)\"/.agent/hooks/post_edit_check.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 900,
+            "command": "\"$(git rev-parse --show-toplevel)\"/.agent/hooks/stop_gate.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

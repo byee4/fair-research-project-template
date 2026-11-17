@@ -1,0 +1,24 @@
+# Contracts for nf-core/rnaseq outputs (default --aligner star_salmon).
+# Verified against the pipeline's output docs; re-check paths when you change version or aligner.
+version: 1
+stages:
+  raw: {description: "FASTQ from data/raw via workflow/pipeline_samplesheet.csv"}
+  aligned: {description: "STAR alignments, duplicate-marked"}
+  quantified: {description: "Salmon quantification merged across samples"}
+products:
+  gene_counts:
+    path: "star_salmon/salmon.merged.gene_counts.tsv"
+    stage: quantified
+    required_columns: [gene_id]
+    columns_include_all: sample_id     # every sample in config/samples.tsv must be a column
+    min_rows: 1000
+  bams:
+    path: "star_salmon/{sample}.markdup.sorted.bam"
+    one_per: sample
+    stage: aligned
+  multiqc:
+    path: "multiqc/star_salmon/multiqc_report.html"
+  software_versions:
+    path: "pipeline_info/*software_versions.yml"
+  provenance:
+    path: "ro-crate-metadata.json"

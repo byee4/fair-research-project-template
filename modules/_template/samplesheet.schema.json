@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "<assay> sample sheet fields (added to the core fields)",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["assay"],
+    "properties": {
+      "assay": {"type": "string", "pattern": "^((EFO|OBI):[0-9]+|TODO:.+)$"}
+    }
+  }
+}

@@ -1,0 +1,83 @@
+# Contracts for the custom skeleton. Every output carries a lineage sidecar (scripts/write_lineage.py).
+version: 1
+stages:
+  raw:
+    description: Unmodified FASTQ from data/raw
+  trimmed:
+    description: Adapter/quality trimmed FASTQ
+  aligned:
+    description: Aligned BAM, unfiltered
+  filtered:
+    description: BAM after MAPQ >= config.filters.min_mapq
+  dedup:
+    description: Filtered BAM after duplicate removal
+  counts:
+    description: Gene-level counts from dedup BAMs
+  merged:
+    description: Per-group pooled signal from dedup BAMs
+  diff:
+    description: Differential results from counts
+  qc:
+    description: QC summary built from named stages
+products:
+  counts_matrix:
+    path: counts/counts_matrix.tsv
+    stage: counts
+    must_derive_from:
+    - dedup
+    required_columns:
+    - gene_id
+    columns_include_all: sample_id
+    min_rows: 1
+    require_lineage: true
+  merged_signal:
+    path: merged/{group}.bedgraph
+    stage: merged
+    must_derive_from:
+    - dedup
+    one_per: group
+    require_lineage: true
+  qc_summary:
+    path: qc/qc_summary.tsv
+    stage: qc
+    must_derive_from:
+    - raw
+    - trimmed
+    - aligned
+    - filtered
+    - dedup
+    required_columns:
+    - sample_id
+    - stage
+    - total_reads
+    - mapped_reads
+    - pct_mapped
+    - dup_rate
+    stage_column_values:
+    - raw
+    - trimmed
+    - aligned
+    - filtered
+    - dedup
+    rows_cover:
+    - sample_id
+    - group
+    require_lineage: true
+  diff_results:
+    path: diff/diff_results.tsv
+    stage: diff
+    must_derive_from:
+    - counts
+    required_columns:
+    - gene_id
+    - log2fc
+    - pvalue
+    - padj
+    value_ranges:
+      padj:
+      - 0
+      - 1
+      pvalue:
+      - 0
+      - 1
+    require_lineage: true

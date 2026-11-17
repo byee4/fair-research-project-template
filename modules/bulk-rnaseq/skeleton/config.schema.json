@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Run configuration",
+  "type": "object",
+  "required": ["samplesheet", "genome", "outdir", "threads"],
+  "properties": {
+    "samplesheet": {"type": "string"},
+    "outdir": {"type": "string"},
+    "genome": {
+      "type": "object",
+      "required": ["build", "fasta", "annotation", "annotation_version", "chrom_sizes"],
+      "properties": {
+        "build": {"type": "string", "enum": ["GRCh38", "GRCm39"]},
+        "fasta": {"type": "string"},
+        "annotation": {"type": "string"},
+        "annotation_version": {"type": "string", "pattern": "^(GENCODE|Ensembl)_[0-9]+$"},
+        "chrom_sizes": {"type": "string"},
+        "chrom_naming": {"type": "string", "enum": ["UCSC", "Ensembl"], "description": "chr1 vs 1; checked against BAM headers"}
+      }
+    },
+    "threads": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 1}},
+    "filters": {
+      "type": "object",
+      "properties": {
+        "min_mapq": {"type": "integer", "minimum": 0},
+        "padj": {"type": "number", "exclusiveMinimum": 0, "maximum": 1}
+      }
+    }
+  }
+}

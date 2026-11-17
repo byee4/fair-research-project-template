@@ -1,0 +1,5 @@
+sample_id	condition	replicate	batch	assay	organism_taxon	biosample	source	platform	donor	section_id	preservation	slide	area	data_path
+CTRL_D1	control	1	slide1	EFO:0010961	NCBITaxon:9606	UBERON:0002107	core order <id>	visium	D1	CTRL_D1_s1	FFPE	V11A00-001	A1	data/raw/visium/CTRL_D1/outs
+CTRL_D2	control	2	slide2	EFO:0010961	NCBITaxon:9606	UBERON:0002107	core order <id>	visium	D2	CTRL_D2_s1	FFPE	V11A00-002	A1	data/raw/visium/CTRL_D2/outs
+DIS_D3	disease	1	slide1	EFO:0010961	NCBITaxon:9606	UBERON:0002107	core order <id>	visium	D3	DIS_D3_s1	FFPE	V11A00-003	A1	data/raw/visium/DIS_D3/outs
+DIS_D4	disease	2	slide2	EFO:0010961	NCBITaxon:9606	UBERON:0002107	core order <id>	visium	D4	DIS_D4_s1	FFPE	V11A00-004	A1	data/raw/visium/DIS_D4/outs

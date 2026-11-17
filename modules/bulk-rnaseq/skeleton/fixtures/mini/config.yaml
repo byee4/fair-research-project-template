@@ -1,0 +1,16 @@
+samplesheet: tests/fixtures/mini/samples.tsv
+outdir: results_test
+genome:
+  build: GRCh38
+  fasta: tests/fixtures/mini/ref/chr22_slice.fa
+  annotation: tests/fixtures/mini/ref/chr22_slice.gtf
+  annotation_version: GENCODE_47
+  chrom_sizes: tests/fixtures/mini/ref/chr22_slice.chrom.sizes
+  chrom_naming: UCSC
+  star_index: tests/fixtures/mini/ref/star_index
+threads:
+  align: 2
+  count: 2
+filters:
+  min_mapq: 10
+  padj: 0.05

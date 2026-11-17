@@ -1,0 +1,21 @@
+# Snakemake 9 profile for TSCC (requires snakemake-executor-plugin-slurm).
+# Launch the controller inside a small Slurm job or tmux on an interactive node —
+# TSCC policy forbids running computational programs on login nodes.
+executor: slurm
+jobs: 100
+software-deployment-method: apptainer
+apptainer-args: "--bind /tscc/lustre/ddn/scratch/$USER --bind /tscc/projects"
+latency-wait: 60
+retries: 1
+rerun-incomplete: true
+printshellcmds: true
+default-resources:
+  slurm_account: "<your_allocation>"
+  slurm_partition: "condo"           # or hotel
+  slurm_extra: "'--qos=condo'"       # TSCC requires partition AND QOS
+  runtime: 120
+  mem_mb: 8000
+set-resources:
+  align:
+    mem_mb: 40000
+    runtime: 240

@@ -1,0 +1,16 @@
+# Human-edited spec. Generate the lock with: conda-lock -f environment.yml -p linux-64
+# and commit containers/environment.lock.yml (pin exact versions).
+name: analysis
+channels: [conda-forge, bioconda]
+dependencies:
+  - python=3.12
+  - fastp=0.24
+  - star=2.7.11b
+  - samtools=1.21
+  - bedtools=2.31
+  - subread=2.0.8
+  - r-base=4.4
+  - bioconductor-deseq2
+  - pandas
+  - pyyaml
+  - jsonschema

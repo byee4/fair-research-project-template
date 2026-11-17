@@ -1,0 +1,9 @@
+replace: [unique]
+unique:
+  - [sample_id, lane]
+  - [fastq_1]
+all_or_none: [fastq_2]
+consistent_within:
+  - {by: sample_id, columns: [condition, replicate, biosample, strandedness]}
+  - {by: group, columns: [condition, biosample]}
+path_columns: [fastq_1, fastq_2]

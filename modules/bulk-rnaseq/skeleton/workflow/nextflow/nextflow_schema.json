@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nextflow_schema.json",
+  "title": "Pipeline parameters",
+  "type": "object",
+  "$defs": {
+    "io": {
+      "title": "Input/output",
+      "type": "object",
+      "required": ["input", "outdir"],
+      "properties": {
+        "data_root": {"type": "string", "format": "directory-path", "description": "Repo root; sample sheet paths are relative to this"},
+        "input": {"type": "string", "format": "file-path", "exists": true, "description": "Sample sheet TSV"},
+        "outdir": {"type": "string", "format": "directory-path"}
+      }
+    },
+    "reference": {
+      "title": "Reference (changes require a decisions/ record)",
+      "type": "object",
+      "properties": {
+        "star_index": {"type": "string", "format": "directory-path"},
+        "gtf": {"type": "string", "format": "file-path", "pattern": "^\\S+\\.gtf(\\.gz)?$"}
+      }
+    },
+    "filters": {
+      "title": "Filters (changes require a decisions/ record)",
+      "type": "object",
+      "properties": {
+        "min_mapq": {"type": "integer", "minimum": 0, "default": 10}
+      }
+    }
+  },
+  "allOf": [{"$ref": "#/$defs/io"}, {"$ref": "#/$defs/reference"}, {"$ref": "#/$defs/filters"}]
+}

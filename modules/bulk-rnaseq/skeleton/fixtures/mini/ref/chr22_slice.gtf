@@ -1,0 +1,2 @@
+chr22	fixture	gene	1000	2000	.	+	.	gene_id "G1"; gene_name "FIX1";
+chr22	fixture	exon	1000	2000	.	+	.	gene_id "G1"; transcript_id "T1";

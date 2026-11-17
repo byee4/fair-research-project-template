@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "samplesheet.core.schema.json",
+  "title": "Core sample sheet fields (all assays)",
+  "description": "Assay-agnostic FAIR metadata. Each assay module adds its own fields in schemas/samplesheet.assay.schema.json; validate_samplesheet.py applies both.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["sample_id", "condition", "replicate", "organism_taxon", "biosample", "source"],
+    "properties": {
+      "sample_id": {"type": "string", "pattern": "^[A-Za-z0-9_]+$"},
+      "condition": {"type": "string", "minLength": 1},
+      "replicate": {"type": "integer", "minimum": 1},
+      "group": {"type": "string", "description": "Optional pooling/merge group"},
+      "batch": {"type": "string", "description": "Library prep / run batch (needed to check confounding)"},
+      "organism_taxon": {"type": "string", "pattern": "^NCBITaxon:[0-9]+$"},
+      "biosample": {"type": "string", "pattern": "^(CVCL_[A-Z0-9]{4}|UBERON:[0-9]+|CL:[0-9]+)$", "description": "Cellosaurus / UBERON / CL id"},
+      "source": {"type": "string", "minLength": 1, "description": "Core order id, collaborator, or public accession"}
+    }
+  }
+}

@@ -1,0 +1,7 @@
+# Option A: run Snakemake on an EC2 instance/ParallelCluster (Slurm) with S3 storage plugin.
+# Option B: snakemake-executor-plugin-aws-batch (check plugin catalog for current status).
+executor: slurm
+software-deployment-method: apptainer
+default-storage-provider: s3
+default-storage-prefix: "s3://<lab-bucket>/<project>"
+jobs: 50

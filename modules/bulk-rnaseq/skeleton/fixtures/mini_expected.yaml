@@ -1,0 +1,14 @@
+# Fill after the first hand-inspected run on the mini fixture. Tolerances are explicit.
+# Any change that alters these values must come with a decisions/ record.
+outputs:
+  counts/counts_matrix.tsv:
+    columns: [gene_id, CTRL_1, CTRL_2, KD_1, KD_2]
+    rows: null            # e.g. 412
+  qc/qc_summary.tsv:
+    rows: 22              # 4 samples x 5 stages + 2 merge groups
+  merged/CTRL.bedgraph: {exists: true}
+  merged/KD.bedgraph: {exists: true}
+values:
+  # sample, stage, column, expected, abs tolerance
+  - [CTRL_1, dedup, total_reads, null, 0]
+  - [CTRL_1, aligned, pct_mapped, null, 0.5]

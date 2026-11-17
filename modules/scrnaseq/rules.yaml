@@ -1,0 +1,11 @@
+replace: [unique, min_per_value]
+unique:
+  - [sample_id, lane]
+  - [fastq_1]
+consistent_within:
+  - {by: sample_id, columns: [condition, donor, material, protocol, expected_cells]}
+  - {by: donor, columns: [condition]}
+consistent_all: [protocol, material]
+min_per_value:
+  - {column: condition, min: 2, distinct: donor}       # DE uses pseudobulk by donor
+path_columns: [fastq_1, fastq_2]

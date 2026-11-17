@@ -1,0 +1,34 @@
+# Contracts for nf-core/spatialvi outputs (per sample). Pipeline is pre-release: re-verify on every pin.
+version: 1
+stages:
+  raw: {description: "FASTQ + images, or Space Ranger outs"}
+  spaceranger: {description: "Space Ranger alignment / spot matrix"}
+  processed: {description: "Filtered, normalized AnnData"}
+products:
+  spaceranger_summary:
+    path: "{sample}/spaceranger/outs/web_summary.html"
+    one_per: sample
+    stage: spaceranger
+  filtered_matrix:
+    path: "{sample}/spaceranger/outs/filtered_feature_bc_matrix"
+    one_per: sample
+    format: dir
+    required_entries: [barcodes.tsv.gz, features.tsv.gz, matrix.mtx.gz]
+  processed_adata:
+    path: "{sample}/data/{sample}.h5ad"
+    one_per: sample
+    format: h5ad
+    stage: processed
+    min_rows: 100            # spots under tissue
+  spatial_positions:
+    path: "{sample}/spaceranger/outs/spatial/tissue_positions.csv"
+    one_per: sample
+    format: csv
+    min_rows: 100
+  report:
+    path: "{sample}/reports/report-{sample}.html"
+    one_per: sample
+  multiqc:
+    path: "multiqc/multiqc_report.html"
+  provenance:
+    path: "ro-crate-metadata.json"

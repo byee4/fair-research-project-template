@@ -1,0 +1,54 @@
+name: bulk-rnaseq
+title: Bulk RNA-seq (short-read, gene-level quantification)
+status: stable
+ontology_term: "EFO:0008896"      # RNA-seq
+variants:
+  polyA-stranded:
+    title: Poly(A) or rRNA-depleted, stranded, paired- or single-end
+    ontology_term: "EFO:0008896"
+    default_pipeline: nf-core/rnaseq
+  3prime-tag:
+    title: 3' tag counting (QuantSeq, BRB-seq style)
+    ontology_term: "EFO:0008896"
+    default_pipeline: nf-core/rnaseq
+    notes: "Check UMI/adapter options for the kit; full-length assumptions (gene body coverage, salmon length correction) do not hold."
+pipelines:
+  - id: nf-core/rnaseq
+    name: nf-core/rnaseq
+    engine: nextflow
+    url: https://nf-co.re/rnaseq
+    releases_url: https://github.com/nf-core/rnaseq/releases
+    use_when: "Standard bulk RNA-seq; maintained, extensive QC (MultiQC, RSeQC, Qualimap), STAR+Salmon by default, runs on Slurm and AWS Batch."
+    caveats: "Pin -r <release>. Strandedness 'auto' is inferred by Salmon — record the inferred value in a decision if it disagrees with the kit."
+    launch: "nextflow run nf-core/rnaseq -r {version} -profile singularity,{site_profile} --input workflow/pipeline_samplesheet.csv --outdir results --genome null --fasta {fasta} --gtf {gtf} -c workflow/provenance.config -resume"
+    outdir: results
+    contracts: nfcore-rnaseq
+    export:
+      filename: pipeline_samplesheet.csv
+      format: csv
+      columns: {sample: "{sample_id}", fastq_1: "{fastq_1}", fastq_2: "{fastq_2}", strandedness: "{strandedness}"}
+  - id: custom-skeleton
+    name: custom bulk RNA-seq skeleton (Snakemake + Nextflow)
+    engine: snakemake
+    url: modules/bulk-rnaseq/skeleton
+    use_when: "Only if nf-core/rnaseq cannot do what the design requires (e.g. unusual library structure). Ships lineage sidecars and stage contracts."
+    caveats: "You own correctness. Every stage needs tests; see skeleton/tests."
+    contracts: custom-skeleton
+    skeleton: skeleton
+interview_questions:
+  - "Library kit and strandedness (forward / reverse / unstranded)? If unsure, the core facility's order form says."
+  - "Paired-end or single-end, and read length?"
+  - "Poly(A) selection, rRNA depletion, or 3' tag kit? Any UMIs?"
+  - "Will samples be split across lanes or sequencing runs (technical replicates to merge)?"
+  - "Primary comparison(s) and covariates for the model (e.g. ~ batch + condition)?"
+pitfalls:
+  - "Wrong strandedness silently halves or zeroes counts → strandedness required, 'auto' only with a decision record."
+  - "Mixed single/paired-end in one run → rules.all_or_none: fastq_2."
+  - "Lanes treated as biological replicates → lanes share sample_id; replicates counted as distinct replicate values."
+  - "Batch confounded with condition → test_assay_bulk.py::test_batch_not_confounded."
+qc_metrics: [pct_mapped, pct_assigned, rRNA_fraction, strand_agreement, duplication, gene_body_coverage_3prime_bias]
+fair:
+  metadata_standard: "MINSEQE"
+  repositories: ["GEO (processed counts + metadata) with SRA (FASTQ)", "dbGaP if human controlled-access"]
+mini_fixture: "10–50k read pairs per sample from a public run of the same kit, aligned to a ~1 Mb chr22 slice with matching GTF subset. Use nf-core/rnaseq's own -profile test as a first smoke test."
+raw_globs: ["**/*.fastq.gz", "**/*.fq.gz"]

@@ -1,0 +1,9 @@
+services:
+  default:
+    build:
+      context: ../..
+      dockerfile: evals/inspect/Dockerfile
+    working_dir: /repo
+    command: tail -f /dev/null
+    network_mode: none          # no egress during evals
+    init: true

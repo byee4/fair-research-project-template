@@ -1,0 +1,11 @@
+# Cross-row rules JSON Schema cannot express. Core defaults below; scripts/init_project.py
+# regenerates this file from these defaults + modules/<assay>/rules.yaml.
+unique:
+  - [sample_id]
+  - [condition, replicate]
+all_or_none: []              # columns that must be filled for all rows or none
+consistent_within: []        # e.g. {by: group, columns: [condition, biosample]}
+consistent_all: []           # columns that must be identical across the whole sheet
+min_per_value:
+  - {column: condition, min: 2, distinct: replicate}
+path_columns: []             # columns holding file/dir paths; checked with --check-files

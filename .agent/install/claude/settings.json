@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(pytest:*)",
+      "Bash(python3 -m pytest:*)",
+      "Bash(python3 scripts/validate_samplesheet.py:*)",
+      "Bash(python3 scripts/check_contracts.py:*)",
+      "Bash(python3 scripts/check_claims.py:*)",
+      "Bash(python3 scripts/export_samplesheet.py:*)",
+      "Bash(python3 scripts/init_project.py --list)",
+      "Bash(bash .agent/done.sh)"
+    ],
+    "ask": [
+      "Bash(git push:*)",
+      "Bash(gh pr merge:*)",
+      "Bash(sbatch:*)",
+      "Bash(srun:*)",
+      "Bash(aws s3:*)",
+      "Bash(nextflow run:*)",
+      "Bash(snakemake --profile:*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.local)",
+      "Read(./.env.production)",
+      "Edit(./.env)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git commit --no-verify:*)"
+    ],
+    "disableBypassPermissionsMode": "disable"
+  },
+  "sandbox": {
+    "enabled": true,
+    "filesystem": {
+      "denyRead": [
+        "~/.aws/credentials",
+        "~/.ssh",
+        "~/.config/gh"
+      ]
+    }
+  },
+  "enableAllProjectMcpServers": false,
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Edit|Write|MultiEdit|NotebookEdit|Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.agent/hooks/pre_tool_guard.py\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR/.agent/hooks/post_edit_check.sh\"",
+            "timeout": 60
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR/.agent/hooks/stop_gate.sh\"",
+            "timeout": 900
+          }
+        ]
+      }
+    ]
+  }
+}

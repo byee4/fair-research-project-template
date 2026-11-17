@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this software or data, please cite it as below."
+title: "<PROJECT_NAME>"
+authors:
+  - family-names: "<Last>"
+    given-names: "<First>"
+    orcid: "https://orcid.org/0000-0000-0000-0000"
+    affiliation: "University of California San Diego"
+license: MIT
+repository-code: "https://github.com/<org>/<repo>"
+version: "0.1.0"
+date-released: "YYYY-MM-DD"

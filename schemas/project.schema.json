@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "project.yaml",
+  "type": "object",
+  "required": ["project", "assay", "organism", "compute", "pipeline", "initialized"],
+  "properties": {
+    "initialized": {"type": "boolean"},
+    "assay": {
+      "type": "object",
+      "properties": {
+        "module": {"type": ["string", "null"], "pattern": "^[a-z0-9-]+$"},
+        "variant": {"type": ["string", "null"]},
+        "ontology_term": {"type": ["string", "null"], "pattern": "^(EFO|OBI):[0-9]+$"}
+      }
+    },
+    "organism": {
+      "type": "object",
+      "properties": {"taxon": {"type": ["string", "null"], "pattern": "^NCBITaxon:[0-9]+$"}}
+    },
+    "pipeline": {
+      "type": "object",
+      "properties": {
+        "mode": {"enum": [null, "community", "custom"]},
+        "version": {"type": ["string", "null"], "not": {"enum": ["latest", "main", "master", "dev"]}},
+        "engine": {"enum": [null, "nextflow", "snakemake", "cwl", "other"]}
+      }
+    },
+    "compute": {"type": "object", "properties": {"primary": {"enum": [null, "tscc", "aws", "both"]}}}
+  },
+  "if": {"properties": {"initialized": {"const": true}}},
+  "then": {
+    "properties": {
+      "assay": {"required": ["module"], "properties": {"module": {"type": "string"}}},
+      "organism": {"properties": {"taxon": {"type": "string"}}},
+      "pipeline": {"required": ["mode", "name", "version"], "properties": {"mode": {"type": "string"}, "name": {"type": "string"}, "version": {"type": "string"}}}
+    }
+  }
+}

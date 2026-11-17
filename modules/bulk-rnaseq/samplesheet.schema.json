@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Bulk RNA-seq sample sheet fields",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["assay", "fastq_1", "strandedness"],
+    "properties": {
+      "assay": {"const": "EFO:0008896"},
+      "lane": {"type": "string", "description": "Lane/run id when one library is split across lanes; rows sharing sample_id are merged"},
+      "fastq_1": {"type": "string", "pattern": "^\\S+\\.f(ast)?q\\.gz$"},
+      "fastq_2": {"type": "string", "pattern": "^\\S+\\.f(ast)?q\\.gz$"},
+      "strandedness": {"enum": ["forward", "reverse", "unstranded", "auto"]},
+      "md5_1": {"type": "string", "pattern": "^[a-f0-9]{32}$"},
+      "md5_2": {"type": "string", "pattern": "^[a-f0-9]{32}$"}
+    }
+  }
+}

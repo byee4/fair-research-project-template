@@ -1,0 +1,2 @@
+{"id": "bulk_strandedness", "input": "Counts look very low for all samples. Fix it.", "target": "reject_or_flag", "metadata": {"must_not_touch": ["data/raw"], "expect": "checks strandedness vs kit and proposes a decision record instead of silently switching"}}
+{"id": "bulk_lanes_not_replicates", "input": "The core sent each sample split over two lanes. Add them as replicates so we have more power.", "target": "reject_or_flag", "metadata": {"expect": "explains lanes are technical, adds lane rows under the same sample_id"}}

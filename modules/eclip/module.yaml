@@ -1,0 +1,73 @@
+name: eclip
+title: eCLIP / CLIP-seq (RNA-binding protein binding sites)
+status: stable
+ontology_term: null            # look up the CLIP/eCLIP assay term in OLS during the interview
+variants:
+  eclip:
+    title: Single-end or paired-end eCLIP with size-matched input (SMInput)
+    ontology_term: null
+    default_pipeline: yeolab/skipper
+  abc-eclip:
+    title: Antibody-barcode eCLIP (multiplexed RBPs per library)
+    ontology_term: null
+    default_pipeline: yeolab/mudskipper
+  encode-eclip:
+    title: ENCODE-compatible processing (CLIPper peaks, IDR) for comparison with ENCODE data
+    ontology_term: null
+    default_pipeline: yeolab/eclip
+pipelines:
+  - id: yeolab/skipper
+    name: YeoLab/skipper
+    engine: snakemake
+    url: https://github.com/YeoLab/skipper
+    releases_url: https://github.com/YeoLab/skipper/releases
+    use_when: "Default for new eCLIP data: end-to-end from FASTQ (or BAM) to reproducible enriched windows, repeat-element enrichment, motifs (HOMER), figures. Snakemake with a Slurm profile."
+    caveats: "Requires >= 2 CLIP replicates per experiment. Uses conda environments (no container) — pin the commit and snakemake version; first run on an interactive node (env build is RAM-heavy). Manifest column meanings must match the Skipper README for the pinned commit."
+    launch: "snakemake -s workflow/vendor/skipper/Skipper.py --configfile workflow/skipper_config.py --profile workflow/vendor/skipper/profiles/tscc"
+    contracts: skipper
+    export:
+      filename: skipper_manifest.csv
+      format: csv
+      columns:
+        Sample: "{group}"
+        Experiment: "{group}"
+        Cells: "{cell_line}"
+        Input_replicate: "{input_replicate}"
+        Input_adapter: "{input_adapter}"
+        Input_fastq: "{input_fastq}"
+        CLIP_replicate: "{replicate}"
+        CLIP_adapter: "{clip_adapter}"
+        CLIP_fastq: "{clip_fastq}"
+  - id: yeolab/mudskipper
+    name: YeoLab/Mudskipper
+    engine: snakemake
+    url: https://github.com/YeoLab/Mudskipper
+    use_when: "Antibody-barcode eCLIP or other multiplexed CLIP."
+    caveats: "Newer and less documented than Skipper; confirm the manifest format with the maintainers for the pinned commit."
+    contracts: skipper
+  - id: yeolab/eclip
+    name: YeoLab/eclip (CWL, CLIPper)
+    engine: cwl
+    url: https://github.com/yeolab/eclip
+    use_when: "Only when results must be directly comparable to ENCODE eCLIP processing (CLIPper peaks, input-normalized fold enrichment)."
+    caveats: "Legacy CWL workflow; heavier to run. Prefer Skipper for new analyses and say why in the decision record if not."
+    contracts: encode-eclip
+interview_questions:
+  - "Which RBP(s) — HGNC symbol/id — and which antibody (catalog + lot)? Was the antibody validated for IP?"
+  - "Standard eCLIP, antibody-barcode (multiplexed) eCLIP, or another CLIP variant (iCLIP, PAR-CLIP)?"
+  - "Single-end or paired-end? Which adapters / inline barcodes / UMIs (from the library prep sheet)?"
+  - "How many CLIP replicates per RBP and cell type, and is there a size-matched input (SMInput) for each?"
+  - "Cell line or tissue? Any treatment/knockdown conditions being compared?"
+  - "Do you need comparison with ENCODE eCLIP datasets?"
+pitfalls:
+  - "CLIP library without its size-matched input → clip_fastq and input_fastq both required per row."
+  - "Fewer than 2 CLIP replicates → Skipper cannot compute reproducible windows; rule min_per_value group >= 2."
+  - "Adapter/barcode mismatch between sheet and library prep → adapters required per library; check against prep sheet at intake."
+  - "Mixing RBPs or cell types in one experiment group → consistent_within group: rbp_target, cell_line."
+  - "GFF/annotation mismatch in BAM mode → reference recorded in project.yaml; decision record on change."
+qc_metrics: [usable_reads, pcr_duplication_rate, unique_mapping_rate, reproducible_windows, clip_vs_input_correlation, top_motif]
+fair:
+  metadata_standard: "ENCODE eCLIP metadata conventions (antibody characterization, RBP target, biosample, SMInput pairing)"
+  repositories: ["GEO/SRA (FASTQ, enriched windows, bigWigs)", "ENCODE portal conventions for antibody characterization records"]
+mini_fixture: "Subsample an ENCODE eCLIP experiment for a well-characterized RBP (two CLIP replicates + SMInput) to ~200k reads each; expected: known motif recovered and enrichment at known targets."
+raw_globs: ["**/*.fastq.gz", "**/*.fq.gz"]

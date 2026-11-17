@@ -1,0 +1,5 @@
+sample_id	condition	replicate	group	assay	organism_taxon	biosample	strandedness	fastq_1	fastq_2	source
+CTRL_1	control	1	CTRL	EFO:0008896	NCBITaxon:9606	CVCL_0030	reverse	tests/fixtures/mini/CTRL_1_R1.fastq.gz	tests/fixtures/mini/CTRL_1_R2.fastq.gz	synthetic fixture
+CTRL_2	control	2	CTRL	EFO:0008896	NCBITaxon:9606	CVCL_0030	reverse	tests/fixtures/mini/CTRL_2_R1.fastq.gz	tests/fixtures/mini/CTRL_2_R2.fastq.gz	synthetic fixture
+KD_1	treatment	1	KD	EFO:0008896	NCBITaxon:9606	CVCL_0030	reverse	tests/fixtures/mini/KD_1_R1.fastq.gz	tests/fixtures/mini/KD_1_R2.fastq.gz	synthetic fixture
+KD_2	treatment	2	KD	EFO:0008896	NCBITaxon:9606	CVCL_0030	reverse	tests/fixtures/mini/KD_2_R1.fastq.gz	tests/fixtures/mini/KD_2_R2.fastq.gz	synthetic fixture

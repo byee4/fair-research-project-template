@@ -1,0 +1,80 @@
+name: spatial
+title: Spatial transcriptomics (sequencing- and imaging-based)
+status: stable
+ontology_term: null               # set per variant; null = look up in OLS (https://www.ebi.ac.uk/ols4) during the interview
+variants:
+  visium:
+    title: 10x Visium (55 µm spots), FFPE or fresh-frozen, CytAssist or standard
+    ontology_term: "EFO:0010961"   # Visium Spatial Gene Expression
+    default_pipeline: nf-core/spatialvi
+  visium-hd:
+    title: 10x Visium HD (2 µm bins)
+    ontology_term: null        # look up in OLS during the interview
+    default_pipeline: nf-core/sopa
+  xenium:
+    title: 10x Xenium in situ (imaging-based, targeted panel)
+    ontology_term: null        # look up in OLS during the interview
+    default_pipeline: nf-core/sopa
+  merscope:
+    title: Vizgen MERSCOPE (MERFISH)
+    ontology_term: null        # look up in OLS during the interview
+    default_pipeline: nf-core/sopa
+  cosmx:
+    title: NanoString/Bruker CosMx SMI
+    ontology_term: null        # look up in OLS during the interview
+    default_pipeline: nf-core/sopa
+pipelines:
+  - id: nf-core/spatialvi
+    name: nf-core/spatialvi
+    engine: nextflow
+    url: https://nf-co.re/spatialvi
+    releases_url: https://github.com/nf-core/spatialvi/releases
+    use_when: "Standard Visium: runs Space Ranger from FASTQ + image (or takes Space Ranger outs), QC, clustering, spatially variable genes, reports."
+    caveats: "As of Oct 2026 the pipeline is listed as dev / not yet released: pin a commit SHA, not a branch, and expect changes. Space Ranger licence/reference download is the user's responsibility."
+    launch: "nextflow run nf-core/spatialvi -r {version} -profile singularity,{site_profile} --input workflow/pipeline_samplesheet.csv --outdir results -c workflow/provenance.config -resume"
+    contracts: nfcore-spatialvi
+    export:
+      filename: pipeline_samplesheet.csv
+      format: csv
+      # Processed mode (Space Ranger outs in data_path). For raw mode, change to:
+      # {sample: "{sample_id}", fastq_dir: "{fastq_dir}", image: "{image}", cytaimage: "{cytaimage}", slide: "{slide}", area: "{area}"}
+      columns: {sample: "{sample_id}", spaceranger_dir: "{data_path}"}
+  - id: nf-core/sopa
+    name: nf-core/sopa
+    engine: nextflow
+    url: https://nf-co.re/sopa
+    releases_url: https://github.com/nf-core/sopa/releases
+    use_when: "Single-cell-resolution spatial (Xenium, Visium HD, MERSCOPE, CosMx, others): segmentation, aggregation, SpatialData .zarr + Xenium Explorer output."
+    caveats: "Technology is selected with a -profile; Visium HD uses a different samplesheet format — check the usage docs for your pinned version."
+    launch: "nextflow run nf-core/sopa -r {version} -profile {technology},singularity,{site_profile} --input workflow/pipeline_samplesheet.csv --outdir results -c workflow/provenance.config -resume"
+    contracts: nfcore-sopa
+    export:
+      filename: pipeline_samplesheet.csv
+      format: csv
+      columns: {sample: "{sample_id}", data_path: "{data_path}"}
+  - id: vendor-plus-spatialdata
+    name: vendor output + SpatialData/squidpy notebooks
+    engine: other
+    url: https://spatialdata.scverse.org
+    use_when: "Exploratory work on vendor-processed outputs (Space Ranger / Xenium Onboard Analysis) when a pipeline is overkill; read with spatialdata-io."
+    caveats: "Notebooks must be parameterized and re-runnable (papermill/quarto); record vendor software versions from the output bundle."
+    contracts: vendor-spatialdata
+interview_questions:
+  - "Which platform and version (Visium, Visium HD, Xenium, MERSCOPE, CosMx)? FFPE or fresh-frozen? CytAssist?"
+  - "For imaging platforms: which gene panel (id/version)? Any custom add-on genes?"
+  - "How many tissue sections, from how many independent donors/animals per condition? (Sections from one donor are not biological replicates.)"
+  - "Will you receive FASTQ + images, or vendor-processed output folders (Space Ranger outs / Xenium output bundle)?"
+  - "Is there a paired H&E or immunofluorescence image, and do you need cell segmentation?"
+  - "Do you plan to integrate with single-cell reference data for deconvolution/label transfer?"
+pitfalls:
+  - "Treating multiple sections from one donor as replicates → donor required; min 2 distinct donors per condition."
+  - "Comparing samples run on different gene panels → rules.consistent_all: panel."
+  - "Visium raw mode without an image → schema requires image or cytaimage when fastq_dir is given."
+  - "Mixing platforms in one analysis → consistent_all: platform."
+  - "Image/coordinate misalignment → require Space Ranger web_summary and visual QC in the report before any spatial statistics."
+qc_metrics: [spots_or_cells_under_tissue, median_genes_per_spot_or_cell, transcripts_per_cell, fraction_reads_in_spots, segmentation_cell_count, negative_control_probe_rate]
+fair:
+  metadata_standard: "MINSEQE + spatial fields (platform, panel, slide/area, section thickness, image metadata); SpatialData/OME-Zarr for images"
+  repositories: ["GEO (matrices + spatial folder + images) with SRA (FASTQ) for sequencing-based", "BioImage Archive or Zenodo for large image bundles", "dbGaP/controlled access for identifiable human tissue as required"]
+mini_fixture: "One small public dataset of the same platform (10x and Vizgen publish small demo datasets), cropped to a small region; for imaging platforms crop the output bundle with spatialdata. Run sopa's / spatialvi's own -profile test first."
+raw_globs: ["**/*.fastq.gz", "**/*.tif", "**/*.tiff", "**/*.btf", "**/*.zarr.zip", "**/experiment.xenium"]

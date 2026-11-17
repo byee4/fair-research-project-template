@@ -1,0 +1,19 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyDeleteOrOverwriteRaw",
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": ["s3:DeleteObject", "s3:DeleteObjectVersion", "s3:PutObjectRetention"],
+      "Resource": "arn:aws:s3:::<lab-bucket>/<project>/raw/*"
+    },
+    {
+      "Sid": "AgentRoleReadOnlyRaw",
+      "Effect": "Deny",
+      "Principal": {"AWS": "arn:aws:iam::<account-id>:role/<project>-agent"},
+      "Action": ["s3:PutObject"],
+      "Resource": "arn:aws:s3:::<lab-bucket>/<project>/raw/*"
+    }
+  ]
+}

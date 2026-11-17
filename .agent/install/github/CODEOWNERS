@@ -1,0 +1,19 @@
+# Agent control plane and CI need a human owner's review on every PR.
+/AGENTS.md                 @brian-yee
+/CLAUDE.md                 @brian-yee
+/.agent/                   @brian-yee
+/.agents/                  @brian-yee
+/.claude/                  @brian-yee
+/.codex/                   @brian-yee
+/.github/                  @brian-yee
+/.pre-commit-config.yaml   @brian-yee
+# Scientific decisions and research config
+/project.yaml              @<pi-github> @brian-yee
+/policy/                   @<pi-github> @brian-yee
+/schemas/                  @brian-yee
+/contracts/                @brian-yee
+/modules/                  @brian-yee
+/workflow/pipeline.yaml    @<pi-github> @brian-yee
+/config/config.yaml        @<pi-github> @brian-yee
+/claims/                   @<pi-github>
+/decisions/                @<pi-github>

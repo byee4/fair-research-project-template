@@ -1,0 +1,58 @@
+name: scrnaseq
+title: Single-cell / single-nucleus RNA-seq (droplet or plate)
+status: stable
+ontology_term: null
+variants:
+  10x-3prime-v3:
+    title: 10x Chromium 3' v3/v3.1
+    ontology_term: "EFO:0009922"   # 10x 3' v3
+    default_pipeline: nf-core/scrnaseq
+    protocol: 10XV3
+  10x-3prime-v4:
+    title: 10x Chromium GEM-X 3' v4
+    ontology_term: null            # look up in OLS during the interview
+    default_pipeline: nf-core/scrnaseq
+    protocol: 10XV4
+  10x-flex-or-multiome:
+    title: 10x Flex (fixed RNA) or Multiome (ATAC + GEX)
+    ontology_term: null
+    default_pipeline: nf-core/scrnaseq
+    notes: "Use the cellranger-multi / cellranger-arc aligners; extra samplesheet columns (feature_type / sample_type, fastq_barcode)."
+  plate-smartseq:
+    title: Smart-seq style full-length, plate-based
+    ontology_term: null
+    default_pipeline: nf-core/scrnaseq
+    protocol: smartseq
+pipelines:
+  - id: nf-core/scrnaseq
+    name: nf-core/scrnaseq
+    engine: nextflow
+    url: https://nf-co.re/scrnaseq
+    releases_url: https://github.com/nf-core/scrnaseq/releases
+    use_when: "Droplet or plate scRNA/snRNA-seq: simpleaf (default), STARsolo, kallisto|bustools or Cell Ranger; h5ad + Seurat rds outputs; optional CellBender."
+    caveats: "Pick the aligner deliberately (Cell Ranger for 10x-matching numbers; simpleaf/STARsolo for speed/openness) and record it. snRNA-seq needs intronic counting — set it explicitly."
+    launch: "nextflow run nf-core/scrnaseq -r {version} -profile singularity,{site_profile} --input workflow/pipeline_samplesheet.csv --outdir results --aligner {aligner} --protocol {protocol} --fasta {fasta} --gtf {gtf} -c workflow/provenance.config -resume"
+    contracts: nfcore-scrnaseq
+    export:
+      filename: pipeline_samplesheet.csv
+      format: csv
+      columns: {sample: "{sample_id}", fastq_1: "{fastq_1}", fastq_2: "{fastq_2}", expected_cells: "{expected_cells}"}
+interview_questions:
+  - "Platform and chemistry exactly (e.g. 10x 3' v3.1, GEM-X 3' v4, 5', Flex, Multiome)? Cells or nuclei?"
+  - "How many samples, from how many independent donors/animals per condition? Any multiplexing (hashtags, genetic demultiplexing)?"
+  - "Target/expected cells per sample?"
+  - "Will lanes be split across files (one sample, several FASTQ pairs)?"
+  - "Downstream goal: cell-type atlas, differential abundance, or differential expression between conditions (needs pseudobulk by donor)?"
+  - "Which aligner does the lab use (Cell Ranger vs simpleaf/STARsolo), and which reference build?"
+pitfalls:
+  - "Cells treated as replicates in DE → donor required; >= 2 distinct donors per condition; DE must be pseudobulk by donor."
+  - "Chemistry/protocol mismatch → protocol consistent across sheet; recorded in pipeline.yaml."
+  - "snRNA-seq counted exon-only → nuclei flag requires intron-inclusive counting (decision record)."
+  - "Lanes treated as samples → lanes share sample_id."
+  - "Ambient RNA / doublets ignored → QC report must state ambient (CellBender or equivalent) and doublet handling."
+qc_metrics: [estimated_cells, median_genes_per_cell, median_umis_per_cell, pct_mito, saturation, doublet_rate, ambient_fraction]
+fair:
+  metadata_standard: "CELLxGENE / HCA metadata (assay, tissue, cell type, donor, development stage ontology ids)"
+  repositories: ["GEO/SRA (FASTQ + matrices)", "CELLxGENE Discover (curated h5ad)", "HCA Data Portal for human atlas data"]
+mini_fixture: "Subsample a small public 10x dataset of the same chemistry (e.g. ~1k-cell PBMC demo) to a few hundred cells/50k reads; run nf-core/scrnaseq -profile test first."
+raw_globs: ["**/*.fastq.gz"]

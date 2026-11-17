@@ -1,0 +1,25 @@
+# Claim -> evidence graph. Each claim is bounded by the validation gates it has passed.
+# Gates: execution, design, inference, biological, external  (pass | fail | pending | n/a)
+# Levels and the gates they require (enforced by scripts/check_claims.py):
+#   observation  -> execution, design
+#   statistical  -> execution, design, inference
+#   mechanism    -> execution, design, inference, biological
+#   clinical     -> all five
+version: 1
+claims:
+  - id: C001
+    text: "<One-sentence claim, e.g. 'Condition X changes <measurement> in <biosample>'>"
+    level: statistical
+    question: "Q1 in docs/experimental_design.md"
+    evidence:
+      - results/<path to the result table this claim rests on>
+    run_crate: results/ro-crate-metadata.json
+    decisions: [decisions/0001-reference.md, decisions/0002-assay-and-pipeline.md]
+    gates:
+      execution: pending
+      design: pending
+      inference: pending
+      biological: pending
+      external: n/a
+    criteria_set_before_results: true
+    reviewer: null
